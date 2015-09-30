@@ -24,7 +24,8 @@
     "reactify": "^1.1.1",
     "rf-release": "0.4.0",
     "uglify-js": "2.4.24",
-    "webpack-dev-server": "1.11.0"
+    "webpack-dev-server": "1.11.0",
+    "lodash":">1.0.0"
   },
   "peerDependencies": {
     "react": ">=0.13.3 || ^0.14.0-beta3"
