@@ -26,5 +26,5 @@
     "uglify-js": "2.4.24",
     "webpack-dev-server": "1.11.0",
     "lodash":">1.0.0"
-  },
+  }
 }
