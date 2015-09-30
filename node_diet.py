@@ -1,19 +1,21 @@
-import os, sys, simplejson
+import os, sys, json
 from subprocess import call
 
 def run():
-    dirs = ["node_modules"]
+    dirs = ["node_modules", ".git"]
 
-    package = simplejson.load(open("package.json"))
-    main = package.get("main", None)
-
-    if os.path.isfile(main):
-        assert len(main.split("/")) > 1
-        dirs.append(main.split("/")[0])
+    package = json.load(open("package.json"))
+    m = package.get("main", None)
+    if os.path.isfile(m + ".js"):
+        if m.split("/")[0] == ".":
+            assert len(m.split("/")) > 2
+            dirs.append(m.split("/")[1])
+        else:
+            assert len(m.split("/")) > 1
+            dirs.append(m.split("/")[0])
     else:
         raise Exception("Unable to find isolated entry point - exiting without modification")
 
-    dirs = ["%s/" % d for d in dirs]
     dirs = set(dirs)
 
     for d in os.listdir(CWD):
@@ -27,7 +29,8 @@ def run():
     for f in os.listdir(CWD):
         if os.path.isfile(os.path.join(CWD, f)) and f not in allowed_files:
             print "removing %s" % f
-            os.remove(os.path.join(CWD, f))
+            # os.remove(os.path.join(CWD, f))
+            call(["git", "rm", "-f", f])
 
     forbidden_modules = {"classnames", "lodash", "react"}
     nm = os.path.join(CWD, "node_modules")
@@ -39,12 +42,12 @@ def run():
             if os.path.isdir(d) and f in forbidden_modules:
                 print "removing %s" % d
                 call(["git", "rm", "-rf", rd])
-                call(["rm", "-rf", d])
+                # call(["rm", "-rf", d])
             else:
                 mods_left = True
     if not mods_left:
         call(["git", "rm", "-rf", nm])
-        call(["rm", "-rf", nm])
+        # call(["rm", "-rf", nm])
 
     for p in ["readme", "keywords", "scripts", "bugs", "homepage", "jest"]:
         package.pop(p)
@@ -54,18 +57,24 @@ def run():
 CWD = os.getcwd()
 print("We're about to put your package on an aggressive diet.")
 print("WE WILL REMOVE FORCEFULLY. MAKE SURE YOU'RE CHECKED IN.")
+RUN = False
 while True:
     try:
-        p = input("enter path [%s]: " % CWD)
+        p = raw_input("enter path [%s]: " % CWD)
+        if p == "q":
+            break
         CWD = os.path.abspath(os.path.expanduser(p))
-        if os.path.isfile(os.path.join(CWD,"package.json"))
-            s = input("are you sure? [n]: ")
+        if os.path.isfile(os.path.join(CWD,"package.json")):
+            s = raw_input("path is [%s] are you sure? [n]: " % CWD)
             if s.lower()[0] == "y":
+                RUN = True
                 break
         else:
             print("no package.json file found!")
-    except:
+    except Exception as e:
+        print(e)
         print("I don't understand what you entered")
 
-os.chdir(CWD)
-run()
+if RUN:
+    os.chdir(CWD)
+    run()
