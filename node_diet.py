@@ -50,7 +50,7 @@ def run():
         # call(["rm", "-rf", nm])
 
     for p in ["readme", "keywords", "scripts", "bugs", "homepage", "jest"]:
-        package.pop(p)
+        if p in package: package.pop(p)
     with open("package.json", "wb") as f:
         json.dump(f, package, sort_keys=True, indent=2, separators=(',', ': '))
 
