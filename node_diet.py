@@ -35,9 +35,10 @@ def run():
     if os.path.isdir(nm):
         for f in os.listdir(nm):
             d = os.path.join(nm, f)
+            rd = os.path.join("node_modules", f)
             if os.path.isdir(d) and f in forbidden_modules:
                 print "removing %s" % d
-                call(["git", "rm", "-rf", d])
+                call(["git", "rm", "-rf", rd])
                 call(["rm", "-rf", d])
             else:
                 mods_left = True
