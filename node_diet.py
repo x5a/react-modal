@@ -52,7 +52,7 @@ def run():
     for p in ["readme", "keywords", "scripts", "bugs", "homepage", "jest"]:
         if p in package: package.pop(p)
     with open("package.json", "wb") as f:
-        json.dump(f, package, sort_keys=True, indent=2, separators=(',', ': '))
+        json.dump(package, f, sort_keys=True, indent=2, separators=(',', ': '))
 
 CWD = os.getcwd()
 print("We're about to put your package on an aggressive diet.")
